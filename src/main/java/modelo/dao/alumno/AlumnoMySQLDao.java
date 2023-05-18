@@ -21,6 +21,9 @@ import modelo.dao.AbstractGenericDao;
 import modelo.events.BDModificadaEvent;
 import modelo.events.BDModificadaListener;
 
+import connection.util.ConnectionManager;
+import connection.util.MyDataSource;
+
 /**
  *
  * @author mfernandez
@@ -28,6 +31,7 @@ import modelo.events.BDModificadaListener;
 public class AlumnoMySQLDao extends AbstractGenericDao<Alumno> implements IAlumnoDao, Serializable {
 
 	private static final long serialVersionUID = 1L;
+	private MyDataSource dataSource;
 
 	// Suponemos que solo habrá un receptor.
 	// Para varios receptores habría que tener una lista de listeners
@@ -43,7 +47,7 @@ public class AlumnoMySQLDao extends AbstractGenericDao<Alumno> implements IAlumn
 	}
 
 	public AlumnoMySQLDao() {
-
+		this.dataSource = ConnectionManager.getDataSource("src/main/resources/db.properties");
 	}
 
 	/*******************************************************
@@ -58,9 +62,9 @@ public class AlumnoMySQLDao extends AbstractGenericDao<Alumno> implements IAlumn
 
 			boolean exito = false;
 			try {
-				Class.forName("com.mysql.cj.jdbc.Driver");
+				Class.forName(dataSource.getDriver());
 
-				con = DriverManager.getConnection("jdbc:mysql://localhost/alumnos", "root", "");
+				con = DriverManager.getConnection(dataSource.getUrl(), dataSource.getUser(), dataSource.getPwd());
 
 				con.setAutoCommit(false);
 				PreparedStatement stmt = con.prepareStatement(
@@ -124,8 +128,9 @@ public class AlumnoMySQLDao extends AbstractGenericDao<Alumno> implements IAlumn
 		List<Alumno> alumnos = new ArrayList<>();
 		Connection con = null;
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			con = DriverManager.getConnection("jdbc:mysql://localhost/alumnos", "root", "");
+			Class.forName(dataSource.getDriver());
+
+			con = DriverManager.getConnection(dataSource.getUrl(), dataSource.getUser(), dataSource.getPwd());
 			Statement s = con.createStatement();
 			ResultSet rs = s.executeQuery("select * from alumnos");
 			while (rs.next()) {

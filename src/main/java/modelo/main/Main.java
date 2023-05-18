@@ -15,7 +15,7 @@ public class Main {
 	//Creamos entidad alumno
 		Alumno alumno = new Alumno();
 		alumno.setApellidos("Nuevos ap");
-		alumno.setDNI("12341234l");
+		alumno.setDNI("12341234m");
 
 		LocalDate localDate = LocalDate.of(2014, 9, 11);
 		Date date = Date.valueOf(localDate);
